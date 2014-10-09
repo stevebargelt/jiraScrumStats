@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>MergedID29806f664a7</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+ <!-- Gauge generated in R 3.0.3 by googleVis 0.5.2 package -->
+<!-- Fri Jun 27 14:30:39 2014 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGaugeID2980433b3e73 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+ "Fixed Delivery",
+90.9 
+] 
+];
+data.addColumn('string','name');
+data.addColumn('number','value');
+data.addRows(datajson);
+return(data);
+}
+
+
+// jsData 
+function gvisDataTableID2980fd13674 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+ "Q1",
+2013,
+57,
+64.50877193,
+null 
+],
+[
+ "Q2",
+2013,
+51,
+104.9607843,
+null 
+],
+[
+ "Q3",
+2013,
+91,
+115.2417582,
+null 
+],
+[
+ "Q4",
+2013,
+76,
+92.96052632,
+null 
+] 
+];
+data.addColumn('string','Quarter');
+data.addColumn('number','Year');
+data.addColumn('number','Count');
+data.addColumn('number','LeadTime');
+data.addColumn('number','CycleTime');
+data.addRows(datajson);
+return(data);
+}
+
+
+// jsData 
+function gvisDataTableID298019c55942 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+ "Q1",
+2014,
+121,
+151.4958678,
+45.4 
+],
+[
+ "Q2",
+2014,
+70,
+109.6285714,
+32.47727273 
+] 
+];
+data.addColumn('string','Quarter');
+data.addColumn('number','Year');
+data.addColumn('number','Count');
+data.addColumn('number','LeadTime');
+data.addColumn('number','CycleTime');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGaugeID2980433b3e73() {
+var data = gvisDataGaugeID2980433b3e73();
+var options = {};
+options["allowHtml"] = true;
+options["min"] =      0;
+options["max"] =    100;
+options["greenFrom"] =    0.9;
+options["greenTo"] =    100;
+options["yellowFrom"] =     70;
+options["yellowTo"] =    0.9;
+options["redFrom"] =      0;
+options["redTo"] =     70;
+
+
+    var chart = new google.visualization.Gauge(
+    document.getElementById('GaugeID2980433b3e73')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+
+
+// jsDrawChart
+function drawChartTableID2980fd13674() {
+var data = gvisDataTableID2980fd13674();
+var options = {};
+options["allowHtml"] = true;
+options["height"] =    150;
+
+
+    var chart = new google.visualization.Table(
+    document.getElementById('TableID2980fd13674')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+
+
+// jsDrawChart
+function drawChartTableID298019c55942() {
+var data = gvisDataTableID298019c55942();
+var options = {};
+options["allowHtml"] = true;
+options["height"] =    150;
+
+
+    var chart = new google.visualization.Table(
+    document.getElementById('TableID298019c55942')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "gauge";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGaugeID2980433b3e73);
+})();
+function displayChartGaugeID2980433b3e73() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+
+
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "table";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartTableID2980fd13674);
+})();
+function displayChartTableID2980fd13674() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+
+
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "table";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartTableID298019c55942);
+})();
+function displayChartTableID298019c55942() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+ 
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGaugeID2980433b3e73"></script>
+
+
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartTableID2980fd13674"></script>
+
+
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartTableID298019c55942"></script>
+ 
+<table border="0">
+<tr>
+<td>
+
+<!-- divChart -->
+  
+<div id="GaugeID2980433b3e73"
+  style="width: 200px; height: 200px;">
+</div>
+
+</td>
+</tr>
+<tr>
+<td>
+
+<table border="0">
+<tr>
+<td>
+
+<!-- divChart -->
+  
+<div id="TableID2980fd13674"
+  style="width: 600px; height: 150px;">
+</div>
+
+</td>
+<td>
+
+<!-- divChart -->
+  
+<div id="TableID298019c55942"
+  style="width: 600px; height: 150px;">
+</div>
+
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+ <div><span>Data: various &#8226; Chart ID: <a href="Chart_MergedID29806f664a7.html">MergedID29806f664a7</a> &#8226; <a href="https://github.com/mages/googleVis">googleVis-0.5.2</a></span><br /> 
+<!-- htmlFooter -->
+<span> 
+  R version 3.0.3 (2014-03-06) 
+  &#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; Data Policy: See individual charts
+</span></div>
+</body>
+</html>

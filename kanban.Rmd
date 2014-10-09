@@ -1,0 +1,259 @@
+```{r global_options, include=FALSE}
+require(knitr)
+require(plyr)
+require(xtable)
+require(googleVis)
+require(rCharts)
+opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+---
+title: "Kanban Metrics"
+author: "Steve Bargelt"
+date: "`r format(Sys.Date(), "%A, %B %d, %Y")`"
+output: html_document
+---
+
+```{r, echo=FALSE }
+initial.dir <- getwd()
+#setwd("C:/Users/bargels/code/kanbanStats")
+classes <- c(Opened="Date", Closed="Date", Ready.for.Dev.Date="Date", Due.Date="Date")
+kanban <- read.csv("data/KanbanScrubbed.csv", header=TRUE, colClasses=classes)
+kanban2013 <- read.csv("data/Kanban2013Scrubbed.csv", header=TRUE)
+
+#kanban <- rbind(kanban, kanban2013)
+kanban2013 <- NULL
+
+#kanban.all <- subset(kanban, !is.na(kanban$Closed))
+
+kanban$LeadTime <- apply(kanban[c('Closed', 'Opened')], 1, 
+                         function(x) as.Date(x[1],format='%Y-%m-%d') - 
+                           as.Date(x[2],format='%Y-%m-%d'))
+
+kanban$CycleTime <- apply(kanban[c('Closed', 'Ready.for.Dev.Date')], 1, 
+                          function(x) as.Date(x[1],format='%Y-%m-%d') - 
+                            as.Date(x[2],format='%Y-%m-%d'))
+
+
+
+kanban$Quarter = quarters(as.Date(kanban$Closed))
+kanban$Month = as.numeric(strftime(kanban$Closed, "%m"))
+kanban$Day = as.numeric(strftime(kanban$Closed, "%d"))
+kanban$Year = as.numeric(strftime(kanban$Closed, "%Y"))
+
+kanban.features <- subset(kanban, kanban$Type == "Feature")
+kanban.bugs <- subset(kanban, kanban$Type == "Bug")
+
+##library(datasets)
+##s <-- split(airquality, airquality$month)
+##lapply(s, function(x) colMeans(x[, c("Ozone', "Solar.R", "Wind")]))
+##sapply(s, function(x) colMeans(x[, c("Ozone', "Solar.R", "Wind")]))
+##sapply(s, function(x) colMeans(x[, c("Ozone', "Solar.R", "Wind")], na.rm=TRUE))
+```
+## Dashboard
+
+
+```{r, results='asis'}
+
+featurecountbyquarter <- count(kanban.features, c('Year','Quarter'))
+
+featuretimesbyquarter <- 
+    aggregate(kanban.features[,11:12], 
+              list(kanban.features$Quarter, kanban.features$Year), 
+              mean, na.rm=TRUE)
+colnames(featuretimesbyquarter) <- c("Quarter", "Year", "LeadTime", "CycleTime")
+
+featuresbyquarter <- 
+    merge(featurecountbyquarter, featuretimesbyquarter, 
+          by = c("Quarter", "Year"))
+colnames(featuresbyquarter) <- c("Quarter", "Year", "Count", "LeadTime", "CycleTime")
+
+featurecountbyquarter <- NULL
+featuretimesbyquarter <- NULL
+
+testTable <- gvisTable(subset(featuresbyquarter, featuresbyquarter$Year == "2014"),options=list(width=800))
+plot(testTable)
+
+testTable <- gvisTable(subset(featuresbyquarter, featuresbyquarter$Year == "2013"),options=list(width=800))
+plot(testTable)
+
+ timesbymonth <- 
+     aggregate(kanban.features[,11:12], 
+               list(kanban.features$Month, kanban.features$Year), 
+               mean, na.rm=TRUE)
+
+ timesbyQuarter <- 
+     aggregate(kanban.features[,11:12], 
+               list(kanban.features$Quarter, kanban.features$Year), 
+               mean, na.rm=TRUE)
+
+```
+## Testing GoogleVis
+
+```{r, results='asis'}
+# op <- options(gvis.plot.tag = "chart")
+# 
+# Line <- gvisLineChart(kanban.features, xvar="Closed", yvar=c("LeadTime", "CycleTime"))
+# plot(Line)
+# 
+# Line <- gvisLineChart(timesbymonth, xvar="Group.1", yvar=c("LeadTime", "CycleTime"))
+# plot(Line)
+# 
+# ## M <- gvisMotionChart(timesbymonth, 'LeadTime', 'Year',
+# ##       options=list(width=400, height=350))
+# ## plot(M)
+
+```
+## Testing rCharts
+
+```{r, results='asis'}
+
+# hair_eye_male <- subset(as.data.frame(HairEyeColor), Sex == "Male")
+# n1 <- nPlot(Freq ~ Hair, group = "Eye", data = hair_eye_male, type = "multiBarChart")
+# n1$print("chart3")
+
+
+## M <- gvisMotionChart(timesbymonth, 'LeadTime', 'Year',
+##       options=list(width=400, height=350))
+## plot(M)
+
+```
+
+## Control Charts
+### All Incident Types : Lead Time
+
+```{r, echo=FALSE}
+
+kanban <- kanban[order(as.Date(kanban$Closed, format="%Y-%m-%d")),]
+
+
+#Fixed Delivery Date Service Class
+kanban.fixeddeliverydate <- subset(kanban, !is.na(kanban$Due.Date))
+#Fixed Delivery Date Service Class
+kanban.nodeliverydate <- subset(kanban, is.na(kanban$Due.Date))
+#kanban.features is also the Standard Service Class
+kanban.features <- subset(kanban, is.na(kanban$Due.Date) & kanban$Type == "Feature")
+#kanban.bugs is also the Intangible Service Class
+kanban.bugs <- subset(kanban, is.na(kanban$Due.Date) & kanban$Type == "Bug")
+
+mean.lead.time.nodeliverydate <- mean(kanban.nodeliverydate$LeadTime, na.rm = TRUE)
+sd.lead.time.nodeliverydate <- sd(kanban.nodeliverydate$LeadTime, na.rm = TRUE)
+ucl.nodeliverydate <- mean.lead.time.nodeliverydate + sd.lead.time.nodeliverydate
+lcl.nodeliverydate <- mean.lead.time.nodeliverydate - sd.lead.time.nodeliverydate
+if (lcl.nodeliverydate<0) {
+  lcl.nodeliverydate = 0
+}
+```
+
+Upper Control Limit: `r ucl.nodeliverydate`  
+Mean Lead Time: `r mean.lead.time.nodeliverydate`
+Lower Control Limit: `r lcl.nodeliverydate`  
+
+```{r, echo=FALSE}
+# make ReleaseDate an ordered factor (so ggplot2 doesn't sort them)
+kanban.nodeliverydate$ReleaseDate <- factor(kanban.nodeliverydate$Closed, levels = kanban.nodeliverydate$Closed, ordered = TRUE)
+
+library(ggplot2)
+p <- ggplot(kanban.nodeliverydate, aes(x = Closed, y=LeadTime)) + geom_point(aes(color=factor(kanban.nodeliverydate$Type)))
+
+p + geom_abline(intercept = lcl.nodeliverydate, slope = 0, color="red") + 
+    geom_abline(intercept = mean.lead.time.nodeliverydate, slope = 0) +
+    geom_abline(intercept = ucl.nodeliverydate, slope = 0, color="red") 
+
+p2 <- ggplot(kanban.nodeliverydate, aes(x = Closed, y=LeadTime)) + geom_point(aes(color=factor(kanban.nodeliverydate$Type)))
+
+ p2 + geom_abline(intercept = lcl.nodeliverydate, slope = 0, color="red") + 
+     geom_abline(intercept = mean.lead.time.nodeliverydate, slope = 0) +
+     geom_abline(intercept = ucl.nodeliverydate, slope = 0, color="red") 
+ 
+ p2 + facet_grid(. ~ kanban.nodeliverydate$Type)
+
+#use facets to auto gen multiple charts...
+```
+
+### Bugs : Lead Time
+
+```{r, echo=FALSE}
+
+mean.lead.time.bugs <- mean(kanban.bugs$LeadTime, na.rm = TRUE)
+sd.lead.time.bugs <- sd(kanban.bugs$LeadTime, na.rm = TRUE)
+ucl.bugs <- mean.lead.time.bugs + sd.lead.time.bugs
+lcl.bugs <- mean.lead.time.bugs - sd.lead.time.bugs
+
+if (lcl.bugs<0) {
+  lcl.bugs = 0
+}
+
+# make ReleaseDate an ordered factor (so ggplot2 doesn't sort them)
+kanban.bugs$Closed <- factor(kanban.bugs$Closed, levels = kanban.bugs$Closed, ordered = TRUE)
+
+p <- ggplot(kanban.bugs, aes(x = Closed, y=LeadTime)) + geom_point()  
+p + geom_abline(intercept = lcl.bugs, slope = 0, color="red") + 
+    geom_abline(intercept = mean.lead.time.bugs, slope = 0) +
+    geom_abline(intercept = ucl.bugs, slope = 0, color="red") 
+
+```
+
+Upper Control Limit: `r ucl.bugs`  
+Mean Lead Time: `r mean.lead.time.bugs`  
+Lower Control Limit: `r lcl.bugs`  
+
+
+### Feature : Lead Time
+
+```{r, echo=FALSE}
+
+mean.lead.time.features <- mean(kanban.features$LeadTime, na.rm = TRUE)
+sd.lead.time.features <- sd(kanban.features$LeadTime, na.rm = TRUE)
+ucl.features <- mean.lead.time.features + sd.lead.time.features
+lcl.features <- mean.lead.time.features - sd.lead.time.features
+
+if (lcl.features<0) {
+  lcl.features = 0
+}
+
+# make ReleaseDate an ordered factor (so ggplot2 doesn't sort them)
+kanban.features$Closed <- 
+    factor(kanban.features$Closed, levels = 
+               kanban.features$Closed, ordered = TRUE)
+
+p <- ggplot(kanban.features, aes(x = Closed, y=LeadTime)) + geom_point()  
+p + geom_abline(intercept = lcl.features, slope = 0, color="red") + 
+    geom_abline(intercept = mean.lead.time.features, slope = 0) +
+    geom_abline(intercept = ucl.features, slope = 0, color="red") 
+
+```
+
+Upper Control Limit: `r ucl.features`  
+Mean Lead Time: `r mean.lead.time.features`  
+Lower Control Limit: `r lcl.features`  
+
+### Feature : Cycle Time
+
+```{r, echo=FALSE}
+
+mean.cycle.time.features <- mean(kanban.features$CycleTime, na.rm = TRUE)
+sd.cycle.time.features <- sd(kanban.features$CycleTime, na.rm = TRUE)
+ucl.features <- mean.cycle.time.features + sd.cycle.time.features
+lcl.features <- mean.cycle.time.features - sd.cycle.time.features
+
+if (lcl.features<0) {
+  lcl.features = 0
+}
+
+# make ReleaseDate an ordered factor (so ggplot2 doesn't sort them)
+kanban.features$Closed <- 
+    factor(kanban.features$Closed, levels = 
+               kanban.features$Closed, ordered = TRUE)
+
+p <- ggplot(kanban.features, aes(x = Closed, y=CycleTime)) + geom_point()  
+p + geom_abline(intercept = lcl.features, slope = 0, color="red") + 
+    geom_abline(intercept = mean.cycle.time.features, slope = 0) +
+    geom_abline(intercept = ucl.features, slope = 0, color="red") 
+
+```
+
+Upper Control Limit: `r ucl.features`  
+Mean Cycle Time: `r mean.cycle.time.features`  
+Lower Control Limit: `r lcl.features`  

@@ -1,0 +1,60 @@
+```{r global_options, include=FALSE}
+require(knitr)
+require(plyr)
+require(xtable)
+require(googleVis)
+opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+---
+title: "kanbanDashboard"
+author: "Steve Bargelt"
+date: "`r format(Sys.Date(), "%A, %B %d, %Y")`"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r, echo=FALSE}
+require(ggplot2)
+set.seed(955)
+# Make some noisily increasing data
+dat <- data.frame(cond = rep(c("A", "B"), each=10),
+                  xvar = 1:20 + rnorm(20,sd=3),
+                  yvar = 1:20 + rnorm(20,sd=3))
+# cond         xvar         yvar
+#    A -4.252354091  3.473157275
+#    A  1.702317971  0.005939612
+#   ... 
+#    B 17.793359218 19.718587761
+#    B 19.319909163 19.647899863
+g4 <- ggplot(dat, aes(x=xvar, y=yvar)) +
+    geom_smooth() +  #we'll see why order is important
+    geom_point(shape=19, aes(color = cond), size=5) 
+#g4
+
+
+require(gridSVG)
+require(XML)
+#print our ggplot2 graphic again
+#g4
+#export to SVG file and R object
+#grid.export deprecates the older gridToSVG
+g4.svg <- grid.export("plot1.svg",addClasses=TRUE)
+#print our newly exported SVG inline
+#cat(saveXML(g4.svg$svg))
+```
